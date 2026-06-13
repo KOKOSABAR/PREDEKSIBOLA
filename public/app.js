@@ -11,6 +11,9 @@ const elements = {
 
 const state = {
   payload: null,
+  lastSignature: '',
+  autoRefreshIntervalMs: 30000,
+  autoRefreshHandle: null,
 };
 
 function escapeHtml(text) {
@@ -176,9 +179,18 @@ function getNowLabel() {
   return `Update: ${time.replace(':', '.')} WIB`;
 }
 
-async function loadPrediksi() {
-  elements.refreshIcon.classList.add('ph-spin');
-  elements.lastUpdatedBadge.textContent = 'Menyingkronkan...';
+function createPrediksiSignature(data) {
+  const prediksi = data?.prediksi || [];
+  const range = data?.meta?.prediksiRange || '';
+  return JSON.stringify({ range, prediksi });
+}
+
+async function loadPrediksi(options = {}) {
+  const silent = Boolean(options.silent);
+  if (!silent) {
+    elements.refreshIcon.classList.add('ph-spin');
+    elements.lastUpdatedBadge.textContent = 'Menyingkronkan...';
+  }
 
   try {
     const response = await fetch('/api/prediksi');
@@ -188,15 +200,23 @@ async function loadPrediksi() {
       throw new Error(data?.error || 'Gagal memuat data');
     }
 
-    state.payload = data;
-    const displayRange = data.meta?.prediksiRange || '-';
-    elements.currentDateHeader.textContent = displayRange;
-    elements.displayDateText.textContent = `PREDIKSI BOLA ${displayRange}`;
-    elements.lastUpdatedBadge.textContent = getNowLabel();
-    elements.marqueeContainer.innerHTML =
-      '<p>SELAMAT DATANG DI PREDIKSI BOLA WDBOS! | SELALU UTAMAKAN PREDIKSI SENDIRI!</p>';
+    const nextSignature = createPrediksiSignature(data);
+    const hasChanged = nextSignature !== state.lastSignature;
 
-    renderLeagues(data.prediksi || []);
+    state.payload = data;
+    if (hasChanged || !state.lastSignature) {
+      state.lastSignature = nextSignature;
+      const displayRange = data.meta?.prediksiRange || '-';
+      elements.currentDateHeader.textContent = displayRange;
+      elements.displayDateText.textContent = `PREDIKSI BOLA ${displayRange}`;
+      elements.marqueeContainer.innerHTML =
+        '<p>SELAMAT DATANG DI PREDIKSI BOLA WDBOS! | SELALU UTAMAKAN PREDIKSI SENDIRI!</p>';
+      renderLeagues(data.prediksi || []);
+    }
+
+    elements.lastUpdatedBadge.textContent = silent
+      ? `${getNowLabel()} • Auto refresh aktif`
+      : getNowLabel();
   } catch (error) {
     elements.dataContent.innerHTML = `
       <div class="error-state">
@@ -206,7 +226,9 @@ async function loadPrediksi() {
     `;
     elements.lastUpdatedBadge.textContent = 'Gagal sinkronisasi';
   } finally {
-    elements.refreshIcon.classList.remove('ph-spin');
+    if (!silent) {
+      elements.refreshIcon.classList.remove('ph-spin');
+    }
   }
 }
 
@@ -536,3 +558,6 @@ elements.refreshBtnMain.addEventListener('click', loadPrediksi);
 elements.copyBtn.addEventListener('click', copyGeneratedScript);
 
 loadPrediksi();
+state.autoRefreshHandle = setInterval(() => {
+  loadPrediksi({ silent: true });
+}, state.autoRefreshIntervalMs);
