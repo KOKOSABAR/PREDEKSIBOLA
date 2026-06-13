@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediksi Bola WDBOS - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <div class="branding-header">
+        <p>Prediksi Bola</p>
+        <h1>PREDIKSI BOLA WDBOS</h1>
+        <div class="meta-info">
+          <span><i class="ph ph-user"></i> By WDBOS</span>
+          <span><i class="ph ph-calendar-blank"></i> <span id="currentDateHeader">-</span></span>
+          <span><i class="ph ph-clock"></i> <span id="lastUpdatedBadge">Menyingkronkan...</span></span>
+          <span><i class="ph ph-star"></i> Sticky post</span>
+        </div>
+        <div class="action-flex">
+          <button id="refreshBtnMain" class="btn-modern">
+            <i class="ph-bold ph-arrows-clockwise" id="refreshIcon"></i> REFRESH DATA
+          </button>
+          <button id="copyBtn" class="btn-modern highlight">
+            <i class="ph-bold ph-copy"></i> SALIN SCRIPT PREDIKSI
+          </button>
+        </div>
+      </div>
+
+      <div class="content-container">
+        <div class="top-meta" id="displayDateText">...</div>
+
+        <div class="marquee-box" id="marqueeContainer">
+          <p>SELAMAT DATANG DI PREDIKSI BOLA WDBOS! | SELALU UTAMAKAN PREDIKSI SENDIRI!</p>
+        </div>
+
+        <div id="dataContent">
+          <div class="loading-state">
+            <i class="ph ph-spinner ph-spin"></i>
+            Menyingkronkan Prediksi...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "dashboard-prediksi-bola",
+  "version": "1.0.0",
+  "description": "Dashboard prediksi bola dengan data dari shortq.xyz",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}
